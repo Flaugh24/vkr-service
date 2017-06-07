@@ -81,32 +81,4 @@ public class StudentCopy implements Serializable {
     public void setEducPrograms(Set<EducProgram> educPrograms) {
         this.educPrograms = educPrograms;
     }
-
-    /*
-            _____________________________________________________________________
-            */
-    public ArrayList<String> parseTxtFile3() throws IOException
-    {
-        String pathTheFile ="D:\\src\\std.txt";
-        String line = "";
-        ArrayList<String> list = new ArrayList<String>();
-        System.out.println("Размер list до заполнения: "+list.size());
-        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(pathTheFile),"windows-1251"));
-        while (line != null)
-        {
-            line = br.readLine();
-            if (line==null)
-            {
-                continue;
-            }
-            line = line.replace(" ","");
-            line = line.replace("|"," ");
-            String tmp[] = line.split(" ");
-            for(int i=0; i<tmp.length; i++)
-            {
-                list.add(tmp[i]);
-            }
-        }
-        return list;
-    }
 }

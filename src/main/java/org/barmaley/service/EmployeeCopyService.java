@@ -1,6 +1,7 @@
 package org.barmaley.service;
 
 import org.barmaley.domain.EmployeeCopy;
+import org.barmaley.domain.StudentCopy;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,17 +28,19 @@ public class EmployeeCopyService {
     @Autowired
     SessionFactory sessionFactory;
 
-
-    @Scheduled(fixedRate = 5000)
-    public void reportCurrentTime() {
-        logger.info("The time is now {}", dateFormat.format(new Date()));
-    }
-
-
     public EmployeeCopy get(String username) {
         Session session = sessionFactory.getCurrentSession();
         EmployeeCopy employeeCopy = (EmployeeCopy) session.get(EmployeeCopy.class, username);
 
         return employeeCopy;
     }
+
+    //Добавление данных координатора в базу
+    public void add(EmployeeCopy employeeCopy) {
+        Session session = sessionFactory.getCurrentSession();
+        session.save(employeeCopy);
+        session.flush();
+    }
+
+
 }
