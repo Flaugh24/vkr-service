@@ -61,9 +61,11 @@ public class EducProgramService {
     }
 
     //Добавление данных
-    public void add(StudentCopy studentCopy) {
+    public void add(EducProgram educProgram) {
         Session session = sessionFactory.getCurrentSession();
-        session.save(studentCopy);
+        session.save(educProgram);
         session.flush();
     }
+
+
 }
