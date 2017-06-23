@@ -96,21 +96,23 @@ public class Auth {
         return toString(entity);
     }
 
-    public Map< StudentCopy, Set<EducProgram >>searchRecordXML() throws Exception {
+    public List<StudentCopy>/*Map< StudentCopy, Set<EducProgram >>*/searchRecordXML() throws Exception {
 
         StudentCopy studentCopy1 = null;
-        Map staff = new HashMap< StudentCopy, Set<EducProgram>>();
+        //Map staff = new HashMap< StudentCopy, Set<EducProgram>>();
+        List staff = new ArrayList();
         testAuth();
         String resultJson = getrequest("http://docker-svc.spbstu.ru:3007/api/v2/asu/groups");
-        System.out.println("result JSON= "+resultJson);
+        System.out.println("groupsAll= "+resultJson);
 
         ObjectMapper mapper = new ObjectMapper();
         ListGroups[] listGroups = mapper.readValue(resultJson, ListGroups[].class);
         System.out.println("number= "+listGroups[7826].getNumber());
-        for(int i=7826; i<=7826;i++) {
+        for(int i=7825; i<=7826;i++) {
             log.info("i= "+i);
             System.out.println("LENGTH: "+listGroups.length);
             resultJson = getrequest("http://docker-svc.spbstu.ru:3007/api/v2/asu/groups/" + listGroups[i].getId() + "/students");
+            System.out.println("groupGet= "+resultJson);
             mapper = new ObjectMapper();
             ListStudentsGroup[] listStudentsGroup = mapper.readValue(resultJson, ListStudentsGroup[].class);
 
@@ -119,12 +121,12 @@ public class Auth {
                 log.info("j= "+j);
 
                 resultJson = getrequest("http://docker-svc.spbstu.ru:3007/api/v2/asu/students/" + listStudentsGroup[j].getStudent());
-                System.out.println("resultJSON= "+resultJson);
+                System.out.println("studentsAllGroup= "+resultJson);
                 mapper = new ObjectMapper();
                 Student student = mapper.readValue(resultJson, Student.class);
 
                 resultJson = getrequest("http://docker-svc.spbstu.ru:3007/api/v2/asu/specs/" + student.getSpec());
-                System.out.println("resultJSON= "+resultJson);
+                System.out.println("studentSpec= "+resultJson);
                 mapper = new ObjectMapper();
                 Speciality speciality = mapper.readValue(resultJson, Speciality.class);
 
@@ -135,7 +137,7 @@ public class Auth {
                         student.getCourse() == 6 && speciality.getLevel_edu().equals("Магистр"))) {
 
                     resultJson = getrequest("http://docker-svc.spbstu.ru:3007/api/v2/asu/cards/" + student.getCard());
-                    System.out.println("resultJSON= "+resultJson);
+                    System.out.println("cardStudent= "+resultJson);
                     mapper = new ObjectMapper();
                     StudentCard studentCard = mapper.readValue(resultJson, StudentCard.class);
 
@@ -151,20 +153,22 @@ public class Auth {
                     EducProgram educProgram = new EducProgram();
 //            educProgram.setInstitute();
 //            educProgram.setDepartment();
+                    educProgram.setId(student.getId());
+                    educProgram.setStudent(studentCopy);
                     educProgram.setDirection(speciality.getName());
                     educProgram.setDirectionCode(speciality.getCode());
                     educProgram.setDegree(speciality.getLevel_edu());
                     educProgram.setGroupNum(listGroups[i].getNumber());
                     // educProgram.setId(6);
                     educProgramsStudent.add(educProgram);
-                    staff.put(studentCopy, educProgramsStudent);
+                    studentCopy.setEducPrograms(educProgramsStudent);
+                    staff.add(studentCopy);
+                    //staff.put(studentCopy, educProgramsStudent);
                     //studentCopy.setEducPrograms(educProgramsStudent);
                     //System.out.println("sizeEducPrograms= "+studentCopy.getEducPrograms().size());
-
                 }
-
             }
-            }
+        }
 
         return staff;
     }

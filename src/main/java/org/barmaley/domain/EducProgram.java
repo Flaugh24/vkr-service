@@ -12,7 +12,6 @@ public class EducProgram implements Serializable {
 
     @Id
     @Column(name = "ID")
-    @GeneratedValue
     private Integer id;
 
     @Column(name = "INSTITUTE")
@@ -33,8 +32,13 @@ public class EducProgram implements Serializable {
     @Column(name = "DEPARTMENT")
     private String department;
 
-    @ManyToMany(mappedBy = "educPrograms")
-    private Set<StudentCopy> studentCopies;
+    @ManyToOne
+    @JoinColumn(name = "STUDENT_ID", nullable = false)
+    private StudentCopy student;
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
 
     public Integer getId() {
         return id;
@@ -56,16 +60,16 @@ public class EducProgram implements Serializable {
         return groupNum;
     }
 
+    public void setGroupNum(String groupNum) {
+        this.groupNum = groupNum;
+    }
+
     public String getDegree() {
         return degree;
     }
 
     public void setDegree(String degree) {
         this.degree = degree;
-    }
-
-    public void setGroupNum(String groupNum) {
-        this.groupNum = groupNum;
     }
 
     public String getDirection() {
@@ -92,16 +96,11 @@ public class EducProgram implements Serializable {
         this.department = department;
     }
 
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
+    public StudentCopy getStudent() {
+        return student;
     }
 
-    public Set<StudentCopy> getStudentCopies() {
-        return studentCopies;
+    public void setStudent(StudentCopy student) {
+        this.student = student;
     }
-
-    public void setStudentCopies(Set<StudentCopy> studentCopies) {
-        this.studentCopies = studentCopies;
-    }
-
 }

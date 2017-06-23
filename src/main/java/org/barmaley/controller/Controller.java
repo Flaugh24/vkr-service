@@ -68,11 +68,13 @@ public class Controller {
     ArrayList<Person> allPerson; //Список всех сотрудников.
     ArrayList<Otdel> allOtdel;   //Список всех отделов.
 
-    //@Scheduled(fixedRate = 5000)
+    //@Scheduled(fixedRate = 500000000)
     public void testParsingXml(){
         logger.info("Я зашел");
-        allPerson = ReadXML.readAllPerson("/home/impolun/git/service/VKR-service/kadry.xml"); //Чтение списка сотрудников.
-        allOtdel = ReadXML.readAllOtdel("/home/impolun/git/service/VKR-service/otdel.xml");   //Чтение списка отделов.
+        //allPerson = ReadXML.readAllPerson("/home/impolun/git/service/VKR-service/kadry.xml"); //Чтение списка сотрудников.
+        //allOtdel = ReadXML.readAllOtdel("/home/impolun/git/service/VKR-service/otdel.xml");   //Чтение списка отделов.
+        allPerson = ReadXML.readAllPerson("/home/impolun/github/VKR-service/kadry.xml"); //Чтение списка сотрудников.
+        allOtdel = ReadXML.readAllOtdel("/home/impolun/github/VKR-service/otdel.xml");   //Чтение списка отделов.
         for (Person person : allPerson) {
             //Получаем номер отдела сотрудника.
             int number = person.getNumberOtdel();
@@ -94,10 +96,19 @@ public class Controller {
             employeeCopy.setSurname(person.getSurname());
             String s = person.getFirstSecondname();
             String[]s1 = s.split(" ");
-            System.out.println("xe= "+s1[0]);
-            System.out.println("xe1= "+s1[1]);
-            employeeCopy.setFirstName(s1[0]);
-            employeeCopy.setSecondName(s1[1]);
+            System.out.println("sizeArrayS1= "+s1.length);
+
+            if(s1.length==2){
+                System.out.println("xe= "+s1[0]);
+                System.out.println("xe1= "+s1[1]);
+                employeeCopy.setFirstName(s1[0]);
+                employeeCopy.setSecondName(s1[1]);
+            }
+            else{
+                System.out.println("xe= "+s1[0]);
+                employeeCopy.setFirstName(s1[0]);
+            }
+
             employeeCopy.setPosition(person.getPosition());
             employeeCopyService.add(employeeCopy);
         }
@@ -109,17 +120,21 @@ public class Controller {
     @Scheduled(fixedRate = 500000000)
     public void test() throws Exception {
         Auth auth = new Auth();
-        Map< StudentCopy, Set<EducProgram >> staff= auth.searchRecordXML();
-        Set<Map.Entry< StudentCopy, Set<EducProgram>>> set = staff.entrySet();
-        for (Map.Entry< StudentCopy, Set<EducProgram>> me : set) {
-            StudentCopy studentCopy = (StudentCopy)me.getKey();
-            studentCopyService.add(studentCopy);
-            Set<EducProgram> educPrograms = (Set<EducProgram>)me.getValue();
-            for(EducProgram educProgram : educPrograms){
-                educProgramService.add(educProgram);
-            }
-            studentCopy.setEducPrograms(educPrograms);
-            studentCopyService.edit(studentCopy);
+       // Map< StudentCopy, Set<EducProgram >> staff= auth.searchRecordXML();
+        List<StudentCopy> staff = auth.searchRecordXML();
+        //Set<Map.Entry< StudentCopy, Set<EducProgram>>> set = staff.entrySet();
+        for(int i=0; i<staff.size();i++){
+            studentCopyService.add(staff.get(i));
         }
+//        for (Map.Entry< StudentCopy, Set<EducProgram>> me : set) {
+//            StudentCopy studentCopy = (StudentCopy)me.getKey();
+//            studentCopyService.add(studentCopy);
+//            Set<EducProgram> educPrograms = (Set<EducProgram>)me.getValue();
+//            //for(EducProgram educProgram : educPrograms){
+//               // educProgramService.add(educPrograms);
+//            //}
+//            studentCopy.setEducPrograms(educPrograms);
+////            studentCopyService.edit(studentCopy);
+//        }
     }
 }
